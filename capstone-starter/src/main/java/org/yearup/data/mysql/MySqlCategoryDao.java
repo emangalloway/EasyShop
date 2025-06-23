@@ -1,15 +1,13 @@
 package org.yearup.data.mysql;
 
+import com.mysql.cj.conf.ConnectionPropertiesTransform;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,8 +77,32 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     @Override
     public Category create(Category category)
     {
+        String createQuery = """
+                INSERT INTO categories (name,description) VALUES (?,?)
+                """;
+        try(Connection connection = getConnection();
+        PreparedStatement createStatement = connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS)) {
+            createStatement.setString(1, category.getName());
+            createStatement.setString(2, category.getDescription());
+            int affectedRows = createStatement.executeUpdate();
+            if (affectedRows == 0){
+                throw new SQLException("Category creation failed, no rows affected")
+            }
+            try(ResultSet genKeys = createStatement.getGeneratedKeys()) {
+                if (genKeys.next()){
+                    int generatedID = genKeys.getInt("category_id");
+                    category.setCategoryId(generatedID);
+                }else {
+                    throw new SQLException("Creation of category failed, no ID found");
+                }
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         // create a new category
-        return null;
+        return category;
     }
 
     @Override
