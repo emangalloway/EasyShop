@@ -1,8 +1,6 @@
 package org.yearup.data.mysql;
 
-import com.mysql.cj.conf.ConnectionPropertiesTransform;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
