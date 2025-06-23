@@ -1,6 +1,7 @@
 package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
@@ -50,21 +51,26 @@ public class CategoriesController
 
     // add annotation to call this method for a POST action
     // add annotation to ensure that only an ADMIN can call this function
+    @RequestMapping(path = "/categories/{categoryId}", method = RequestMethod.PUT)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Category addCategory(@RequestBody Category category) {
-        // insert the category
+        categoryDao.create(category);
         return null;
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId
     // add annotation to ensure that only an ADMIN can call this function
+    @RequestMapping(path = "/categories/{categoryId}", method = RequestMethod.POST)
     public void updateCategory(@PathVariable int id, @RequestBody Category category) {
-        // update the category by id
+        categoryDao.update(id,category);
     }
 
 
     // add annotation to call this method for a DELETE action - the url path must include the categoryId
     // add annotation to ensure that only an ADMIN can call this function
+    @RequestMapping(path = "/categories/{categoryId}", method = RequestMethod.DELETE)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable int id) {
-        // delete the category by id
+        categoryDao.delete(id);
     }
 }
