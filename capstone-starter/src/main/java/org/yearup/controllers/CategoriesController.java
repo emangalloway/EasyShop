@@ -2,7 +2,9 @@ package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -14,6 +16,9 @@ import java.util.List;
 // add the annotation to make this controller the endpoint for the following url
     // http://localhost:8080/categories
 // add annotation to allow cross site origin requests
+@RestController
+@RequestMapping("categories")
+@CrossOrigin
 public class CategoriesController
 {
     private CategoryDao categoryDao;
@@ -29,37 +34,56 @@ public class CategoriesController
     }
 
     // add the appropriate annotation for a get action
-    @RequestMapping(path = "/categories", method = RequestMethod.GET)
+    @GetMapping
     public List<Category> getAll() {
-        List<Category> categories = categoryDao.getAllCategories();
-        return categories;
+        return categoryDao.getAllCategories();
     }
 
     // add the appropriate annotation for a get action
-    @RequestMapping(path = "/categories", method = RequestMethod.GET)
+    @GetMapping("/{id}")
     public Category getById(@PathVariable int id) {
+        Category category = null;
+        try {
+
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad");
+        }
+        if (category == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
         return categoryDao.getById(id);
     }
 
     // the url to return all products in category 1 would look like this
     // https://localhost:8080/categories/1/products
-    @GetMapping("/categories/{categoryId}/products")
+    @GetMapping("/{categoryId}/products")
     public List<Product> getProductsById(@PathVariable int categoryId) {
-        List<Product> products = productDao.listByCategoryId(categoryId);
-        return products;
+        try {
+
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
+        }
+
+        return productDao.listByCategoryId(categoryId);
     }
 
     // add annotation to call this method for a POST action
     // add annotation to ensure that only an ADMIN can call this function
-    @RequestMapping(path = "/categories/{categoryId}", method = RequestMethod.PUT)
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Category addCategory(@RequestBody Category category) {
-        categoryDao.create(category);
-        return null;
+        try {
+            return categoryDao.create(category);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Oops.. our bad");
+        }
+
     }
 
     // add annotation to call this method for a PUT (update) action - the url path must include the categoryId
     // add annotation to ensure that only an ADMIN can call this function
+    @PutMapping("{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(path = "/categories/{categoryId}", method = RequestMethod.POST)
     public void updateCategory(@PathVariable int id, @RequestBody Category category) {
         categoryDao.update(id,category);

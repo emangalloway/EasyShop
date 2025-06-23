@@ -22,8 +22,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     }
 
     @Override
-    public List<Category> getAllCategories()
-    {
+    public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
 
         String query = """
@@ -50,8 +49,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     }
 
     @Override
-    public Category getById(int categoryId)
-    {
+    public Category getById(int categoryId) {
         String getByIdQuery = """
                 SELECT * FROM categories WHERE category_id = ?
                 """;
@@ -85,7 +83,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             createStatement.setString(2, category.getDescription());
             int affectedRows = createStatement.executeUpdate();
             if (affectedRows == 0){
-                throw new SQLException("Category creation failed, no rows affected")
+                throw new SQLException("Category creation failed, no rows affected");
             }
             try(ResultSet genKeys = createStatement.getGeneratedKeys()) {
                 if (genKeys.next()){
