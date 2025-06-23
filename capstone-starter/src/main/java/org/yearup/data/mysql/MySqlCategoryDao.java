@@ -1,6 +1,7 @@
 package org.yearup.data.mysql;
 
 import com.mysql.cj.conf.ConnectionPropertiesTransform;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Component;
 import org.yearup.data.CategoryDao;
@@ -14,6 +15,7 @@ import java.util.List;
 @Component
 public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 {
+
     public MySqlCategoryDao(DataSource dataSource)
     {
         super(dataSource);
@@ -41,10 +43,9 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
                 }while (resultSet.next());
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        // get all categories
         return categories;
     }
 
@@ -62,21 +63,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
                     int category_id = resultSet.getInt(1);
                     String name = resultSet.getString(2);
                     String description = resultSet.getString(3);
-                    Category category = new Category(category_id,name,description);
-                    return category;
+                    Category createdCategory = new Category(category_id,name,description);
+                    return createdCategory;
                 }
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        // get category by id
         return null;
     }
 
     @Override
-    public Category create(Category category)
-    {
+    public Category create(Category category) {
         String createQuery = """
                 INSERT INTO categories (name,description) VALUES (?,?)
                 """;
@@ -98,16 +97,14 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             }
 
 
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
         }
-        // create a new category
         return category;
     }
 
     @Override
-    public void update(int categoryId, Category category)
-    {
+    public void update(int categoryId, Category category) {
         String updateQuery = """
                 UPDATE categories SET name = ?,description = ? WHERE category_id = ?
                 """;
@@ -118,30 +115,27 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             updateStatement.setInt(3, categoryId);
             updateStatement.executeUpdate();
 
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
         }
-        // update category
     }
 
     @Override
-    public void delete(int categoryId)
-    {
+    public void delete(int categoryId) {
         String deleteQuery= """
                 DELETE FROM categories WHERE category_id = ?
                 """;
 
         try(Connection connection = getConnection();
         PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
-            deleteStatement.
+            deleteStatement.setInt(1,categoryId);
+            deleteStatement.executeUpdate();
         }catch (SQLException e){
             e.printStackTrace();
         }
-        // delete category
     }
 
-    private Category mapRow(ResultSet row) throws SQLException
-    {
+    private Category mapRow(ResultSet row) throws SQLException {
         int categoryId = row.getInt("category_id");
         String name = row.getString("name");
         String description = row.getString("description");
