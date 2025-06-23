@@ -22,6 +22,12 @@ public class CategoriesController
 
     // create an Autowired controller to inject the categoryDao and ProductDao
 
+
+    public CategoriesController(CategoryDao categoryDao, ProductDao productDao) {
+        this.categoryDao = categoryDao;
+        this.productDao = productDao;
+    }
+
     // add the appropriate annotation for a get action
     public List<Category> getAll()
     {
