@@ -34,10 +34,12 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
             if (resultSet.next()){
                 do {
-                   int category_id = resultSet.getInt("categoryId");
-                    String name = resultSet.getString("name");
-                    String description = resultSet.getString("description");
-                    Category category = new Category(category_id,name,description);
+//                   int category_id = resultSet.getInt("category_id");
+//                    String name = resultSet.getString("name");
+//                    String description = resultSet.getString("description");
+
+                    Category category = mapRow(resultSet);
+
                     categories.add(category);
                 }while (resultSet.next());
             }
@@ -87,8 +89,9 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             }
             try(ResultSet genKeys = createStatement.getGeneratedKeys()) {
                 if (genKeys.next()){
-                    int generatedID = genKeys.getInt("category_id");
-                    category.setCategoryId(generatedID);
+                    //note genKeys is
+                  int generatedID = genKeys.getInt("category_id");
+                  category.setCategoryId(generatedID);
                 }else {
                     throw new SQLException("Creation of category failed, no ID found");
                 }
