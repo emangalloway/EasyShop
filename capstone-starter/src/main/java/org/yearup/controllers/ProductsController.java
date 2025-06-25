@@ -9,6 +9,7 @@ import org.yearup.models.Product;
 import org.yearup.data.ProductDao;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -32,12 +33,9 @@ public class ProductsController
                                 @RequestParam(name="color", required = false) String color
                                 )
     {
-        try
-        {
+        try {
             return productDao.search(categoryId, minPrice, maxPrice, color);
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
         }
     }
