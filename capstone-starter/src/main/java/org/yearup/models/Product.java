@@ -7,6 +7,25 @@ public class Product
     private int productId;
     private String name;
     private BigDecimal price;
+
+    public BigDecimal getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(BigDecimal maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public BigDecimal getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(BigDecimal minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    private BigDecimal minPrice;
+    private BigDecimal maxPrice;
     private int categoryId;
     private String description;
     private String color;
@@ -29,6 +48,13 @@ public class Product
         this.stock = stock;
         this.isFeatured = isFeatured;
         this.imageUrl = imageUrl;
+    }
+
+    public Product(String color, BigDecimal minPrice, BigDecimal maxPrice, int categoryId) {
+        this.color = color;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        this.categoryId = categoryId;
     }
 
     public int getProductId()
