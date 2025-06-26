@@ -137,7 +137,7 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-   /* public void deleteItem(int productId, int userId) {
+    public void deleteItem(int productId, int userId) {
         String removeFromCartQry = """
                  DELETE FROM shopping_cart WHERE product_id = ? AND user_id = ?
                 """;
