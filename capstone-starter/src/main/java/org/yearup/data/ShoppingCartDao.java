@@ -10,5 +10,5 @@ public interface ShoppingCartDao
     void addCartItem(ShoppingCartItem item, int userId);//Create
     void updateQuantity(int productId, int newQuantity, int userId);//Update
     void deleteItem(int productId, int userId);//Delete
-    
+
 }
