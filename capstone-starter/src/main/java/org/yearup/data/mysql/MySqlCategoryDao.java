@@ -90,7 +90,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             try(ResultSet genKeys = createStatement.getGeneratedKeys()) {
                 if (genKeys.next()){
                     //note genKeys is
-                  int generatedID = genKeys.getInt("category_id");
+                  int generatedID = genKeys.getInt(1);
                   category.setCategoryId(generatedID);
                 }else {
                     throw new SQLException("Creation of category failed, no ID found");
