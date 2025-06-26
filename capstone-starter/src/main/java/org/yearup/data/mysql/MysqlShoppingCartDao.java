@@ -97,7 +97,7 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    /*public void addCartItem(ShoppingCartItem item, int userId) {
+    public void addCartItem(ShoppingCartItem item, int userId) {
         String addProductToCartQry = """
                 INSERT INTO shopping_cart (user_id,product_id,quantity) VALUES (?,?,?)
                 """;
@@ -119,7 +119,7 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    public void updateQuantity(int productId, int newQuantity, int userId) {
+   /* public void updateQuantity(int productId, int newQuantity, int userId) {
         String qtyUpdateQry = """
                  UPDATE shopping_cart SET quantity = ? WHERE user_id = ? AND product_id = ?
                 """;
