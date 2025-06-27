@@ -19,6 +19,8 @@ import java.security.Principal;
 // only logged in users should have access to these actions
 @RestController
 @RequestMapping("/cart")
+@CrossOrigin
+@PreAuthorize("isAuthenticated")
 public class ShoppingCartController
 {
     // a shopping cart requires
@@ -34,8 +36,7 @@ public class ShoppingCartController
     }
 
     // each method in this controller requires a Principal object as a parameter
-    @GetMapping
-    @PreAuthorize("isAuthorized")
+    @GetMapping("")
     public ShoppingCart getCart(Principal principal)
     {
         try
@@ -58,8 +59,7 @@ public class ShoppingCartController
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("/products/{productId}")
-    @PreAuthorize("isAuthorized")
-    @ResponseStatus(value = HttpStatus.CREATED)
+   // @ResponseStatus(value = HttpStatus.CREATED)
     public ShoppingCart updateProductInCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
@@ -76,7 +76,6 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{productId}")
-    @PreAuthorize("isAuthorized")
     public ShoppingCart addProductToCart(@PathVariable int productId, @RequestBody Principal principal){
         try {
             String userName = principal.getName();
@@ -92,7 +91,6 @@ public class ShoppingCartController
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
     @DeleteMapping
-    @PreAuthorize("isAuthorized")
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ShoppingCart clearCart(@PathVariable int productId, Principal principal){
         try {
