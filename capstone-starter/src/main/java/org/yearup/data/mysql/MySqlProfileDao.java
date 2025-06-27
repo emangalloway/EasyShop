@@ -77,7 +77,7 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
         return null;
     }
     @Override
-    public void update(int userId, Profile profile){
+    public Profile update(int userId, Profile profile){
         String sql = """
                 UPDATE profiles SET first_name = ?, last_name = ?, phone = ?, email = ?, address = ?, city = ?, state = ?, zip = ? WHERE user_id = ?
                 """;
@@ -93,6 +93,24 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
             ps.setString(8, profile.getZip());
             ps.setInt(9, userId);
             ps.executeUpdate();
+
+            //need to get profile create and get attributes of profile so i can return them in controller
+            try (ResultSet resultSet = ps.executeQuery()){
+                if (resultSet.next()){
+                    int id = resultSet.getInt(1);
+                    String firstName = resultSet.getString(2);
+                    String lastName = resultSet.getString(3);
+                    String phone = resultSet.getString(4);
+                    String email = resultSet.getString(5);
+                    String address = resultSet.getString(6);
+                    String city = resultSet.getString(7);
+                    String state = resultSet.getString(8);
+                    String zip = resultSet.getString(9);
+                    Profile newProfile = new Profile(id,firstName,lastName,phone,email,address,city,state,zip);
+                    return newProfile;
+                }
+            }
+            return null;
         }
         catch (SQLException e)
         {
