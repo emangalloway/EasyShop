@@ -13,8 +13,4 @@ public interface ShoppingCartDao
     ShoppingCart updateQuantity(int productId, int newQuantity, int userId);//Update
     ShoppingCart deleteItem(int productId, int userId);//Delete
     ShoppingCart clearOutCart(int userId);//Removes all items
-//clear cart
-    //another add product same param just add qty
-    //check cart for product param prod id and user id
-    //check qty for certain product
 }
