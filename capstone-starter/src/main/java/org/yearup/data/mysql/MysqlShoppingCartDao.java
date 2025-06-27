@@ -211,14 +211,11 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             PreparedStatement clearStatement = connection.prepareStatement(clearAllItemsQry)) {
             clearStatement.setInt(1,userId);
             clearStatement.executeUpdate();
-            ShoppingCart emptyCart = new ShoppingCart();
-            emptyCart.setUserId(userId);
-            emptyCart.setItems(Collections.emptyMap());
-            return emptyCart;
+
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return null;
+        return getByUserId(userId);
     }
 
 
