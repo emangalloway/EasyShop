@@ -59,7 +59,7 @@ public class ShoppingCartController
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("/products/{productId}")
-   // @ResponseStatus(value = HttpStatus.CREATED)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public ShoppingCart updateProductInCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
@@ -76,12 +76,16 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{productId}")
-    public ShoppingCart addProductToCart(@PathVariable int productId, @RequestBody Principal principal){
+    public ShoppingCart addProductToCart(@PathVariable int productId, @RequestBody ShoppingCartItem item, Principal principal){
         try {
             String userName = principal.getName();
-            User user = userDao.getByUserName(userName);
-            int userId = user.getId();
-            return shoppingCartDao.addProduct(productId,userId);
+            int userId = userDao.getByUserName(userName).getId();
+            ShoppingCartItem exsitingItem = shoppingCartDao.getItemInsideCart(userId,productId);
+            if (exsitingItem == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product in cart");
+            }
+            shoppingCartDao.updateQuantity(productId, item.getQuantity(), userId);
+            return shoppingCartDao.getByUserId(userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
         }
@@ -91,13 +95,14 @@ public class ShoppingCartController
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
     @DeleteMapping
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ShoppingCart clearCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
-            return shoppingCartDao.clearCart(productId,userId);
+            shoppingCartDao.clearCart(userId,productId);
+            return new ShoppingCart();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
         }

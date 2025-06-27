@@ -44,13 +44,16 @@ private UserDao userDao;
 
     }
 
-    @PostMapping("{id}")
+   /* @PostMapping("{id}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Profile createProfile(@PathVariable int id, @RequestBody Profile profile){
+    public Profile createProfile(@RequestBody Profile profile, Principal principal){
         try {
-            return profileDao.update(id,profile);
+            String userName = principal.getName();
+            int userId = userDao.getIdByUsername(userName);
+            profile.setUserId(userId);
+            return profileDao.create(profile);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Oops.. our bad");
         }
-    }
+    }*/
 }
