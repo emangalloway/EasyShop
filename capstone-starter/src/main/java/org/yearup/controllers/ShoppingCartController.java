@@ -83,8 +83,8 @@ public class ShoppingCartController
         try {
             String userName = principal.getName();
             int userId = userDao.getByUserName(userName).getId();
-            ShoppingCartItem exsitingItem = shoppingCartDao.getItemInsideCart(userId,productId);
-            if (exsitingItem == null) {
+            ShoppingCartItem existingItem = shoppingCartDao.getItemInsideCart(userId,productId);
+            if (existingItem == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product in cart");
             }
             shoppingCartDao.updateQuantity(productId, item.getQuantity(), userId);
@@ -94,18 +94,16 @@ public class ShoppingCartController
         }
     }
 
-
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
     @DeleteMapping("")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(value =HttpStatus.NO_CONTENT)
     @PreAuthorize(value = "isAuthenticated()")
-    public ShoppingCart clearCart(@RequestBody Principal principal){
+    public void clearCart(@RequestBody Principal principal){
         try {
             String userName = principal.getName();
             int userId = userDao.getByUserName(userName).getId();
             shoppingCartDao.clearOutCart(userId);
-            return new ShoppingCart();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
         }

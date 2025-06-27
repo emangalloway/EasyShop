@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
+import org.yearup.data.UserDao;
 import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.ShoppingCartItem;
@@ -15,10 +16,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 
 @Component
 public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDao {
     private final ProductDao productDao;
+    private int userId;
 
     @Autowired
     public MysqlShoppingCartDao(DataSource dataSource, ProductDao productDao) {
@@ -208,11 +211,14 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
             PreparedStatement clearStatement = connection.prepareStatement(clearAllItemsQry)) {
             clearStatement.setInt(1,userId);
             clearStatement.executeUpdate();
-
+            ShoppingCart emptyCart = new ShoppingCart();
+            emptyCart.setUserId(userId);
+            emptyCart.setItems(Collections.emptyMap());
+            return emptyCart;
         }catch (SQLException e){
             e.printStackTrace();
         }
-        return new ShoppingCart();
+        return null;
     }
 
 

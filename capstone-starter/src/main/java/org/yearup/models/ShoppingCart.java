@@ -7,6 +7,15 @@ import java.util.Map;
 public class ShoppingCart
 {
     private Map<Integer, ShoppingCartItem> items = new HashMap<>();
+    private int userId;
+
+    public ShoppingCart(int userId) {
+        this.userId = userId;
+        this.items = new HashMap<>();
+    }
+
+    public ShoppingCart() {
+    }
 
     public Map<Integer, ShoppingCartItem> getItems() {
         return items;
@@ -14,6 +23,10 @@ public class ShoppingCart
 
     public void setItems(Map<Integer, ShoppingCartItem> items) {
         this.items = items;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public boolean contains(int productId) {
