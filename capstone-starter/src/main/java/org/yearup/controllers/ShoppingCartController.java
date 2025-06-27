@@ -59,6 +59,7 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("/products/{productId}")
     @PreAuthorize("isAuthorized")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public ShoppingCart updateProductInCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
@@ -81,7 +82,7 @@ public class ShoppingCartController
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
-            return shoppingCartDao.addProduct(item.getProductId(),userId);
+            return shoppingCartDao.addProduct(productId,userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
         }
@@ -92,12 +93,13 @@ public class ShoppingCartController
     // https://localhost:8080/cart
     @DeleteMapping
     @PreAuthorize("isAuthorized")
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ShoppingCart clearCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
-            return shoppingCartDao.clearCart();
+            return shoppingCartDao.clearCart(productId,userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
         }
