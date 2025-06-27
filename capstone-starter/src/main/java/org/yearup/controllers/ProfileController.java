@@ -20,8 +20,9 @@ private ProfileDao profileDao;
 private UserDao userDao;
 
     @Autowired
-    public ProfileController(ProfileDao profileDao) {
+    public ProfileController(ProfileDao profileDao, UserDao userDao) {
         this.profileDao = profileDao;
+        this.userDao = userDao;
     }
 
     @GetMapping("")
@@ -33,15 +34,10 @@ private UserDao userDao;
 
     @PutMapping("")
     public Profile updateProfile(@RequestBody Profile profile, Principal principal){
-        try {
             String userName = principal.getName();
             int userId = userDao.getIdByUsername(userName);
             profile.setUserId(userId);//Make sure userId matched logged in person
              return profileDao.update(userId,profile);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Oops.. our bad");
-        }
-
     }
 
    /* @PostMapping("{id}")

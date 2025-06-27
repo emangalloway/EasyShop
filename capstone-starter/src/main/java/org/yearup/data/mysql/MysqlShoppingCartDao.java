@@ -200,8 +200,19 @@ public class MysqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     }
 
     @Override
-    public ShoppingCart clearCart(int productId, int userId) {
-        return null;
+    public ShoppingCart clearOutCart(int userId) {
+        String clearAllItemsQry = """
+                DELETE FROM shopping_cart WHERE user_id = ?
+                """;
+        try(Connection connection = getConnection();
+            PreparedStatement clearStatement = connection.prepareStatement(clearAllItemsQry)) {
+            clearStatement.setInt(1,userId);
+            clearStatement.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return new ShoppingCart();
     }
 
 

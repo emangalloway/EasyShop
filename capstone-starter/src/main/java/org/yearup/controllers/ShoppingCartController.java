@@ -20,7 +20,6 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/cart")
 @CrossOrigin
-@PreAuthorize("isAuthenticated")
 public class ShoppingCartController
 {
     // a shopping cart requires
@@ -37,6 +36,7 @@ public class ShoppingCartController
 
     // each method in this controller requires a Principal object as a parameter
     @GetMapping("")
+    @PreAuthorize(value = "isAuthenticated()")
     public ShoppingCart getCart(Principal principal)
     {
         try
@@ -59,13 +59,15 @@ public class ShoppingCartController
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping("/products/{productId}")
-    @ResponseStatus(value = HttpStatus.CREATED)
+    @PreAuthorize(value = "isAuthenticated()")
     public ShoppingCart updateProductInCart(@PathVariable int productId, Principal principal){
         try {
             String userName = principal.getName();
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
-            return shoppingCartDao.addProductWithQty(productId,userId,1);
+            if (user == null)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User does not exist");
+            return shoppingCartDao.addProduct(productId,userId);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad.");
         }
@@ -76,6 +78,7 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
     @PutMapping("/products/{productId}")
+    @PreAuthorize(value = "isAuthenticated()")
     public ShoppingCart addProductToCart(@PathVariable int productId, @RequestBody ShoppingCartItem item, Principal principal){
         try {
             String userName = principal.getName();
@@ -94,14 +97,14 @@ public class ShoppingCartController
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
-    @DeleteMapping
+    @DeleteMapping("")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public ShoppingCart clearCart(@PathVariable int productId, Principal principal){
+    @PreAuthorize(value = "isAuthenticated()")
+    public ShoppingCart clearCart(@RequestBody Principal principal){
         try {
             String userName = principal.getName();
-            User user = userDao.getByUserName(userName);
-            int userId = user.getId();
-            shoppingCartDao.clearCart(userId,productId);
+            int userId = userDao.getByUserName(userName).getId();
+            shoppingCartDao.clearOutCart(userId);
             return new ShoppingCart();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops.. our bad");
